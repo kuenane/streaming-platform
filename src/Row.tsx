@@ -2,46 +2,12 @@ import { type } from "os";
 import { title } from "process";
 import React, { useState, useEffect } from "react";
 import axios from "./axios";
-
-const base_url: string = "https://image.tmdb.org/t/p/original";
-
+import "./Row.css";
 type Props = {
   title: string;
   fetchUrl: string;
   isLargeRow?: boolean;
 };
-
-export interface Welcome6 {
-  took: number;
-  timed_out: boolean;
-  _shards: Shards;
-  hits: Hits;
-}
-
-export interface Shards {
-  total: number;
-  successful: number;
-  skipped: number;
-  failed: number;
-}
-
-export interface Hits {
-  total: Total;
-  max_score: number;
-  hits: Hit[];
-}
-
-export interface Hit {
-  _index: Index;
-  _type: Type;
-  _id: string;
-  _score: number;
-  _source: Movie;
-}
-
-export enum Index {
-  ContentIndex = "content-index",
-}
 
 export interface Movie {
   metadata: Metadata;
@@ -49,21 +15,13 @@ export interface Movie {
   rating: number;
   description: string;
   episode: number;
-  type: SourceType;
   duration: number;
   objectKey: string;
-  genre: Genre[];
   name: string;
   guid: string;
   season: number;
   order: number;
   parents: string[];
-}
-
-export enum Genre {
-  Adventure = "Adventure",
-  Drama = "Drama",
-  Fantasy = "Fantasy",
 }
 
 export interface Metadata {
@@ -79,21 +37,17 @@ export enum ImageType {
   Poster = "poster",
 }
 
-export enum SourceType {
-  Episode = "episode",
-}
+type Options = {
+  height: string;
+  width: string;
+  playerVars: {
+    autoplay: 0 | 1 | undefined;
+  };
+};
 
-export enum Type {
-  Doc = "_doc",
-}
-
-export interface Total {
-  value: number;
-  relation: string;
-}
-
-function Row({ title, fetchUrl }: Props): JSX.Element {
+function Row({ title, fetchUrl, isLargeRow }: Props): JSX.Element {
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [trailerUrl, setTrailerUrl] = useState<string | null>("");
   // A snippet of code that runs based on a specific condition
   useEffect(() => {
     // if [], run once when row loads and don't run again
@@ -109,10 +63,10 @@ function Row({ title, fetchUrl }: Props): JSX.Element {
   //console.log(movies);
   if (!movies) return null as any;
   return (
-    <div className="row">
+    <div className="Row">
       <h2>{title}</h2>
-      <div className="row__posters">
-        {movies.map((movie, i) => (
+      <div className="Row__posters">
+        {movies.map((movie) => (
           <React.Fragment key={movie.guid}>
             <div>
               <h5>{movie.name}</h5>
@@ -120,7 +74,12 @@ function Row({ title, fetchUrl }: Props): JSX.Element {
             <div>
               {movie.metadata &&
                 movie.metadata.images.map((image) => (
-                  <img key={image.type} src={image.url} alt={movie.name} />
+                  <img
+                    key={image.url}
+                    src={image.url}
+                    alt={movie.name}
+                    className={`Row_poster`}
+                  />
                 ))}
             </div>
           </React.Fragment>
