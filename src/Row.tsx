@@ -1,8 +1,10 @@
 import { type } from "os";
 import { title } from "process";
 import React, { useState, useEffect } from "react";
+//import movieTrailer from 'movie-trailer';
 import axios from "./axios";
 import "./Row.css";
+
 type Props = {
   title: string;
   fetchUrl: string;
@@ -47,25 +49,28 @@ type Options = {
 
 function Row({ title, fetchUrl, isLargeRow }: Props): JSX.Element {
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [trailerUrl, setTrailerUrl] = useState<string | null>("");
+  //const [trailerUrl, setTrailerUrl] = useState<string | null>("");
   // A snippet of code that runs based on a specific condition
+  //if [] then run only once when the row loads
+  //if [variable] then run when row loads and run when variable value changes
   useEffect(() => {
     // if [], run once when row loads and don't run again
     // While the data is loading, do something
     async function fetchData() {
+      //it take some time in fetching from API
+      //axios gives instance and remaining from prop fetchUrl passed from Row
       const fetchRequest = await axios.get(fetchUrl);
       setMovies(fetchRequest.data);
       return fetchRequest;
     }
     fetchData();
   }, [fetchUrl]);
-
-  //console.log(movies);
+  console.log(movies);
   if (!movies) return null as any;
   return (
-    <div className="Row">
+    <div className="row">
       <h2>{title}</h2>
-      <div className="Row__posters">
+      <div className="row__posters">
         {movies.map((movie) => (
           <React.Fragment key={movie.guid}>
             <div>
@@ -78,7 +83,7 @@ function Row({ title, fetchUrl, isLargeRow }: Props): JSX.Element {
                     key={image.url}
                     src={image.url}
                     alt={movie.name}
-                    className={`Row_poster`}
+                    className={`row_poster ${isLargeRow && "row_poster_large"}`}
                   />
                 ))}
             </div>
