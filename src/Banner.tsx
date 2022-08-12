@@ -1,36 +1,50 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+//import requests from "./requests";
 import axios from "./axios";
-import requests from "./request";
 import "./Banner.css";
-
-//type Props = {};
-
+import requests from "./request";
 function Banner() {
-  const [movie, setMovie] = useState([]);
-
+  const [movie, setMovies] = useState([]);
   useEffect(() => {
     async function fetchData() {
       const request = await axios.get(requests.fetchMovies);
-      setMovie(
+      setMovies(
         request.data.results[
           Math.floor(Math.random() * request.data.results.length - 1)
         ]
       );
-      // Math.floor(Math.random() * request.data.results.length -1)
       return request;
     }
+    fetchData();
   }, []);
+
+  function truncate(str: string, n: number) {
+    return str?.length > n ? str.substring(0, n - 1) + "..." : str;
+  }
+
   return (
-    <header>
-      {/*Background images*/}
-      {/*title*/}
-      {/*div two buttons*/}
-      {/*description*/}
+    <header
+      className="banner"
+      style={{
+        backgroundSize: "cover",
+        backgroundPosition: "center center",
+        backgroundImage: `url("https://image.tmdb.org/t/p/original/${movie?.backdrop_path}")`,
+      }}
+    >
+      <div className="banner_content">
+        {/* ? is optional chaining */}
+        <h1 className="banner_title">
+          {movie?.title || movie?.name || movie?.original_name}
+        </h1>
+        <div className="banner_buttons">
+          <button className="banner_button">Play</button>
+          <button className="banner_button">My List</button>
+        </div>
+        <h1 className="banner_description">{truncate(movie?.overview, 150)}</h1>
+      </div>
+      <div className="banner_fadeBottom"></div>
     </header>
   );
 }
 
 export default Banner;
-function fetchMovies(fetchMovies: any) {
-  throw new Error("Function not implemented.");
-}
